@@ -249,52 +249,55 @@ public class Model{
     {
         Transition lastTransition = lastState.GetTransitionOn(lastSymbol.GetName());
         Transition currentTransition = currentState.GetTransitionOn(currentSymbol.GetName());
-
-        if (lastTransition.HasExpectationWith(currentTransition))
+        if (lastTransition != null)
         {
-            lastTransition.StrengthenExpectationWith(currentTransition);
-            currentTransition.StrengthenExpectationWith(lastTransition);
-        }else
-        {
-            lastTransition.CreateExpectationWith(currentTransition);
-            currentTransition.CreateExpectationWith(lastTransition);
-        }
-
-        foreach(string symbolA in inputSymbols)
-        {
-            if (!SymbolInInput(symbolA))
+            if (lastTransition.HasExpectationWith(currentTransition))
             {
-                Transition symbolTransition = currentState.GetTransitionOn(symbolA);
-                if (lastTransition.HasExpectationWith(symbolTransition))
-                {
-                    lastTransition.WeakenExpectationWith(symbolTransition);
-                    symbolTransition.WeakenExpectationWith(lastTransition);
-                }
+                lastTransition.StrengthenExpectationWith(currentTransition);
+                currentTransition.StrengthenExpectationWith(lastTransition);
             }
-            foreach (string symbolB in inputSymbols)
+            else
             {
-                if (symbolA != symbolB)
+                lastTransition.CreateExpectationWith(currentTransition);
+                currentTransition.CreateExpectationWith(lastTransition);
+            }
+
+            foreach (string symbolA in inputSymbols)
+            {
+                if (!SymbolInInput(symbolA))
                 {
-                    Transition aTransition = currentState.GetTransitionOn(symbolA);
-                    Transition bTransition = currentState.GetTransitionOn(symbolB);
-                    if (aTransition != null)
+                    Transition symbolTransition = currentState.GetTransitionOn(symbolA);
+                    if (lastTransition.HasExpectationWith(symbolTransition))
                     {
-                        if (SymbolInInput(symbolA) && SymbolInInput(symbolB))
+                        lastTransition.WeakenExpectationWith(symbolTransition);
+                        symbolTransition.WeakenExpectationWith(lastTransition);
+                    }
+                }
+                foreach (string symbolB in inputSymbols)
+                {
+                    if (symbolA != symbolB)
+                    {
+                        Transition aTransition = currentState.GetTransitionOn(symbolA);
+                        Transition bTransition = currentState.GetTransitionOn(symbolB);
+                        if (aTransition != null)
                         {
-                            if (aTransition.HasExpectationWith(bTransition))
+                            if (SymbolInInput(symbolA) && SymbolInInput(symbolB))
                             {
-                                aTransition.StrengthenExpectationWith(bTransition);
+                                if (aTransition.HasExpectationWith(bTransition))
+                                {
+                                    aTransition.StrengthenExpectationWith(bTransition);
+                                }
+                                else
+                                {
+                                    aTransition.CreateExpectationWith(bTransition);
+                                }
                             }
-                            else
+                            else if (SymbolInInput(symbolA) || SymbolInInput(symbolB))
                             {
-                                aTransition.CreateExpectationWith(bTransition);
-                            }
-                        }
-                        else if (SymbolInInput(symbolA) || SymbolInInput(symbolB))
-                        {
-                            if (aTransition.HasExpectationWith(bTransition))
-                            {
-                                aTransition.WeakenExpectationWith(bTransition);
+                                if (aTransition.HasExpectationWith(bTransition))
+                                {
+                                    aTransition.WeakenExpectationWith(bTransition);
+                                }
                             }
                         }
                     }

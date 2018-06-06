@@ -69,6 +69,8 @@ public class SnyderStart : MonoBehaviour
         rewards.AddRange(new State[] { s9 });
         punishments.AddRange(new State[] { });
 
+        model = new Model(states, rewards, punishments, Sigma, Delta, s0);
+
         Transition transition0_1 = new Transition(0, 1, "1N");
         Transition transition0_2 = new Transition(0, 2, "2N");
         Transition transition0_3 = new Transition(0, 3, "1E");
@@ -112,6 +114,5 @@ public class SnyderStart : MonoBehaviour
         transition0_7.SetDistribution(cannotForward);
         transition0_8.SetDistribution(canForward);
 
-        model = new Model(states, rewards, punishments,Sigma, Delta, s0 );
     }
 }
